@@ -18,26 +18,25 @@ project(FlightController C CXX ASM)
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
+add_executable(${PROJECT_NAME} FlightController.cpp)
+add_subdirectory(./src)
 
-add_executable(FlightController FlightController.c)
+pico_set_program_name(${PROJECT_NAME} "FlightController")
+pico_set_program_version(${PROJECT_NAME} "0.1")
 
-pico_set_program_name(FlightController "FlightController")
-pico_set_program_version(FlightController "0.1")
-
-pico_enable_stdio_uart(FlightController 1)
-pico_enable_stdio_usb(FlightController 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)
+pico_enable_stdio_usb(${PROJECT_NAME} 1)
 
 # Add the standard library to the build
-target_link_libraries(FlightController pico_stdlib)
+target_link_libraries(${PROJECT_NAME} pico_stdlib)
 
 # Add any user requested libraries
-target_link_libraries(FlightController
+target_link_libraries(${PROJECT_NAME}
         hardware_spi
         hardware_i2c
-        hardware_pio
-        hardware_timer
+        hardware_uart
         hardware_pwm
         )
 
-pico_add_extra_outputs(FlightController)
+pico_add_extra_outputs(${PROJECT_NAME})
 
