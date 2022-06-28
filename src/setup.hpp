@@ -40,6 +40,11 @@ extern "C"
 // PWM defines
 #define PWM_PIN 2
 #define PWM_CLC "8ns" // just for reference!
+#define MAIN_THRUST 7
+#define RIGHT_ALIGH 10
+#define BACK_ALIGN 11
+#define LEFT_ALIGN 12
+#define FRONT_ALIGN 13
 
     // PID stuff
     typedef struct

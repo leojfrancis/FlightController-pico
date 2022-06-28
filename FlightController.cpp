@@ -27,13 +27,14 @@ mpu6050_inst_t init_imu()
 void init_motor()
 {
     // motor setup
-    setup_motor(10, PWM_CHAN_A);
-    setup_motor(11, PWM_CHAN_B);
-    setup_motor(12, PWM_CHAN_A);
-    setup_motor(13, PWM_CHAN_B);
+    calibrate_thrust(MAIN_THRUST, PWM_CHAN_B, 0);
 
-    setup_motor(21, PWM_CHAN_B); // Main Thrust
+    calibrate_servo(FRONT_ALIGN, PWM_CHAN_B, 0);
+    calibrate_servo(BACK_ALIGN, PWM_CHAN_B, 0);
+    calibrate_servo(LEFT_ALIGN, PWM_CHAN_A, 0);
+    calibrate_servo(RIGHT_ALIGH, PWM_CHAN_A, 0);
 }
+
 int main()
 {
     stdio_init_all();
@@ -64,56 +65,57 @@ int main()
     long max[4], min[4], temp[4] = {0.0, 0.0, 0.0, 0.0};
 
     sleep_ms(100);
-    for (;;)
-    {
-        // if (mpu6050_update_state(&mpu6050))
-        // {
-        //     printf("mpu6050 disconnected\n");
-        //     return 1;
-        // }
-        Vector3 MPU_rpy = {
-            // mpu6050_get_roll(&mpu6050),  //  x -180 < roll < 180
-            // mpu6050_get_pitch(&mpu6050), // y -90 < pitch < 90
-            // mpu6050_get_yaw(&mpu6050)    // z -180 < yaw < 180
-            (double)-180 + rand() % 361, (double)-180 + rand() % 181, (double)-180 + rand() % 361};
-        // printf("Roll:%f - Pitch:%f - Yaw:%f \n", MPU_rpy.x, MPU_rpy.y, MPU_rpy.z);
+    // for (;;)
+    // {
+    //     // if (mpu6050_update_state(&mpu6050))
+    //     // {
+    //     //     printf("mpu6050 disconnected\n");
+    //     //     return 1;
+    //     // }
+    //     Vector3 MPU_rpy = {
+    //         // mpu6050_get_roll(&mpu6050),  //  x -180 < roll < 180
+    //         // mpu6050_get_pitch(&mpu6050), // y -90 < pitch < 90
+    //         // mpu6050_get_yaw(&mpu6050)    // z -180 < yaw < 180
+    //         (double)-180 + rand() % 361, (double)-180 + rand() % 181, (double)-180 + rand() % 361};
+    //     // printf("Roll:%f - Pitch:%f - Yaw:%f \n", MPU_rpy.x, MPU_rpy.y, MPU_rpy.z);
 
-        double abs_time = absolute_time_diff_us(timer, get_absolute_time());
-        double tvX = pid_tx.update(ROT.x - MPU_rpy.x, abs_time);
-        double tvY = pid_ty.update(ROT.y - MPU_rpy.y, abs_time);
-        double tvXY = pid_rot_z.update(ROT.z - MPU_rpy.z, abs_time);
-        printf("tvX:%f - tvY:%f - tvXY:%f \n", tvX, tvY, tvXY);
-        printf("%f \n", abs_time);
+    //     double abs_time = absolute_time_diff_us(timer, get_absolute_time());
+    //     double tvX = pid_tx.update(ROT.x - MPU_rpy.x, abs_time);
+    //     double tvY = pid_ty.update(ROT.y - MPU_rpy.y, abs_time);
+    //     double tvXY = pid_rot_z.update(ROT.z - MPU_rpy.z, abs_time);
+    //     printf("tvX:%f - tvY:%f - tvXY:%f \n", tvX, tvY, tvXY);
+    //     printf("%f \n", abs_time);
 
-        // {
-        //     max[0] = maximum(temp[0], tvX);
-        //     max[1] = maximum(temp[1], tvY);
-        //     max[2] = maximum(temp[2], tvXY);
-        //     max[3] = maximum(temp[3], abs_time);
+    // {
+    //     max[0] = maximum(temp[0], tvX);
+    //     max[1] = maximum(temp[1], tvY);
+    //     max[2] = maximum(temp[2], tvXY);
+    //     max[3] = maximum(temp[3], abs_time);
 
-        //     min[0] = maximum(temp[0], tvX);
-        //     min[1] = maximum(temp[1], tvY);
-        //     min[2] = maximum(temp[2], tvXY);
-        //     min[3] = maximum(temp[3], abs_time);
-        
-        //     temp[0] = tvX;
-        //     temp[1] = tvY;
-        //     temp[2] = tvXY;
-        //     temp[3] = abs_time;
+    //     min[0] = maximum(temp[0], tvX);
+    //     min[1] = maximum(temp[1], tvY);
+    //     min[2] = maximum(temp[2], tvXY);
+    //     min[3] = maximum(temp[3], abs_time);
 
-        //     for (int i = 0; i < 4; i++)
-        //     {
-        //         printf("max %d- %f ", i, max[i]);
-        //         printf("min %d- %f \n", i, max[i]);
-        //     }
-        // }
+    //     temp[0] = tvX;
+    //     temp[1] = tvY;
+    //     temp[2] = tvXY;
+    //     temp[3] = abs_time;
 
-        pwm_set_duty(10, map(-ANGLE_GAIN * (tvX + ROT_CORRECTION * tvXY), 0, 180, 5, 10)); // RX
-        pwm_set_duty(11, map(-ANGLE_GAIN * (tvX + ROT_CORRECTION * tvXY), 0, 180, 5, 10)); // RY
-        pwm_set_duty(12, map(ANGLE_GAIN * (tvX + ROT_CORRECTION * tvXY), 0, 180, 5, 10));  // FY
-        pwm_set_duty(13, map(ANGLE_GAIN * (tvX + ROT_CORRECTION * tvXY), 0, 180, 5, 10));  // FX
-        sleep_ms(10);
-        timer = get_absolute_time();
-    }
+    //     for (int i = 0; i < 4; i++)
+    //     {
+    //         printf("max %d- %f ", i, max[i]);
+    //         printf("min %d- %f \n", i, max[i]);
+    //     }
+    // }
+
+    //     pwm_set_duty(LEFT_ALIGN, map(-ANGLE_GAIN * (tvX + ROT_CORRECTION * tvXY), 0, 180, 5, 10)); // RX
+    //     pwm_set_duty(RIGHT_ALIGH, map(-ANGLE_GAIN * (tvX + ROT_CORRECTION * tvXY), 0, 180, 5, 10)); // RY
+    //     pwm_set_duty(FRONT_ALIGN, map(ANGLE_GAIN * (tvX + ROT_CORRECTION * tvXY), 0, 180, 5, 10));  // FY
+    //     pwm_set_duty(BACK_ALIGN, map(ANGLE_GAIN * (tvX + ROT_CORRECTION * tvXY), 0, 180, 5, 10));  // FX
+    //     pwm_set_duty(MAIN_THRUST, 6);
+    //     sleep_ms(10);
+    //     timer = get_absolute_time();
+    // }
     return true;
 }

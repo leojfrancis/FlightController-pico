@@ -1,11 +1,10 @@
 #include "setup.hpp"
-
-uint setup_motor(uint pin, uint chan);
+#include "utils.hpp"
 
 uint32_t wrap = 16;
 
-uint32_t pwm_set_freq_duty(uint slice_num,
-                           uint chan, uint32_t f, int d)
+uint32_t _pwm_set_freq_duty(uint slice_num,
+                            uint chan, uint32_t f, double_t d)
 {
    uint32_t clock = 125000000;
    uint32_t divider16 = clock / f / 4096 +
@@ -20,38 +19,57 @@ uint32_t pwm_set_freq_duty(uint slice_num,
    return wrap;
 }
 
-uint32_t pwm_set_duty(uint gpio, uint8_t d)
+uint32_t _pwm_set_duty(uint gpio, double_t d)
 {
    // pwm_set_chan_level(slice_num, chan, wrap * d / 100);
    pwm_set_gpio_level(gpio, wrap * d / 100);
    return wrap;
 }
 
-// int test_motor()
-// {
-//    stdio_init_all();
-
-//    gpio_set_function(PWM_PIN, GPIO_FUNC_PWM);
-//    uint slice_num = pwm_gpio_to_slice_num(PWM_PIN);
-//    pwm_set_freq_duty(slice_num, PWM_CHAN_A, 50, 5);
-//    pwm_set_enabled(slice_num, true);
-//    sleep_ms(10000);
-//    // pwm_set_duty(slice_num, PWM_CHAN_A, 7);
-
-//    while (1)
-//    {
-//    }
-//    return true;
-// }
-
-uint setup_motor(uint pin, uint chan)
+uint _setup_motor(uint pin, uint chan)
 {
    gpio_set_function(pin, GPIO_FUNC_PWM);
    sleep_ms(10);
    uint slice_num = pwm_gpio_to_slice_num(pin);
-   printf("%d",slice_num);
-   pwm_set_freq_duty(slice_num, chan, 50, 5);
+   _pwm_set_freq_duty(slice_num, chan, 50, 5);
    pwm_set_enabled(slice_num, true);
-   sleep_ms(50);
    return slice_num;
+}
+
+void _calibrate(uint pin, uint pwm_chan, double_t final_duty)
+{
+   _setup_motor(pin, pwm_chan);
+   sleep_ms(2000);
+   _pwm_set_duty(pin, 10);
+   sleep_ms(2000);
+   _pwm_set_duty(pin, final_duty);
+}
+
+void calibrate_thrust(uint pin, uint pwm_chan, double_t power)
+{
+   _calibrate(pin, pwm_chan, map(power, 0, 100, 5, 10));
+}
+
+void calibrate_servo(uint pin, uint pwm_chan, double_t angle)
+{
+   _calibrate(pin, pwm_chan, map(angle, -90, 90, 5, 10));
+}
+
+void thrust(uint pin, uint pwm_chan, double_t power)
+{
+   _pwm_set_duty(pin, map(power, 0, 100, 5, 10));
+}
+
+/** \brief Set servo angle
+ *  \ingroup motor pwm
+ *
+ * Control servo
+ *
+ * \param pin PWM slice number
+ * \param pwm_chan  pwm channel
+ * \param angle  angle to move
+ */
+void servo_angle(uint pin, uint pwm_chan, double_t angle)
+{
+   _pwm_set_duty(pin, map(angle, -90, 90, 5, 10));
 }
