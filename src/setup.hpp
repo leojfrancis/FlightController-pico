@@ -41,7 +41,7 @@ extern "C"
 #define PWM_PIN 2
 #define PWM_CLC "8ns" // just for reference!
 #define MAIN_THRUST 7
-#define RIGHT_ALIGH 10
+#define RIGHT_ALIGN 10
 #define BACK_ALIGN 11
 #define LEFT_ALIGN 12
 #define FRONT_ALIGN 13
@@ -49,12 +49,12 @@ extern "C"
     // PID stuff
     typedef struct
     {
-        double x;
-        double y;
-        double z;
+        double roll;
+        double pitch;
+        double yaw;
     } Vector3;
-#define ANGLE_GAIN 10
-#define ROT_CORRECTION 0.1
+#define ANGLE_GAIN 12
+#define ROT_CORRECTION 0.2
 
 #ifdef __cplusplus
 }

@@ -36,28 +36,27 @@ uint _setup_motor(uint pin, uint chan)
    return slice_num;
 }
 
-void _calibrate(uint pin, uint pwm_chan, double_t final_duty)
+void calibrate_thrust(uint pin, uint pwm_chan, double_t power)
 {
    _setup_motor(pin, pwm_chan);
    sleep_ms(2000);
    _pwm_set_duty(pin, 10);
    sleep_ms(2000);
-   _pwm_set_duty(pin, final_duty);
+   _pwm_set_duty(pin, map(power, 0, 10, 5, 10));
 }
 
-void calibrate_thrust(uint pin, uint pwm_chan, double_t power)
+void calibrate_servo(uint pin, uint pwm_chan)
 {
-   _calibrate(pin, pwm_chan, map(power, 0, 100, 5, 10));
+   _setup_motor(pin, pwm_chan);
+   sleep_ms(100);
+   _pwm_set_duty(pin, 10);
+   sleep_ms(100);
+   _pwm_set_duty(pin, map(0, -90, 90, 5, 10));
 }
 
-void calibrate_servo(uint pin, uint pwm_chan, double_t angle)
+void thrust(uint pin, double_t power)
 {
-   _calibrate(pin, pwm_chan, map(angle, -90, 90, 5, 10));
-}
-
-void thrust(uint pin, uint pwm_chan, double_t power)
-{
-   _pwm_set_duty(pin, map(power, 0, 100, 5, 10));
+   _pwm_set_duty(pin, map(power, 0, 10, 5, 10));
 }
 
 /** \brief Set servo angle
@@ -69,7 +68,7 @@ void thrust(uint pin, uint pwm_chan, double_t power)
  * \param pwm_chan  pwm channel
  * \param angle  angle to move
  */
-void servo_angle(uint pin, uint pwm_chan, double_t angle)
+void servo_angle(uint pin, double_t angle)
 {
    _pwm_set_duty(pin, map(angle, -90, 90, 5, 10));
 }

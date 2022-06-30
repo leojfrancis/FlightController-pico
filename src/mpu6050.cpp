@@ -199,10 +199,13 @@ int mpu6050_init(mpu6050_inst_t* inst, i2c_inst_t* i2c, uint pin) {
         return 1;
     #endif /* MPU6050_CAL_WAIT_FOR_REST */
 
+    puts("Calibrating...");
     mpu6050_data_t calibration_data;
     if (mpu6050_avg_reading(inst, &calibration_data, MPU6050_CAL_READINGS))
         return 1;
-
+    
+    // printf("%d  %d  %d",calibration_data.accel_x,calibration_data.accel_y,calibration_data.accel_z);
+    
     inst->x_zero = calibration_data.gyro_x;
     inst->y_zero = calibration_data.gyro_y;
     inst->z_zero = calibration_data.gyro_z;
