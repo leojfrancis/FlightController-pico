@@ -37,6 +37,7 @@ target_link_libraries(${PROJECT_NAME}
         hardware_i2c
         hardware_uart
         hardware_pwm
+        hardware_timer
         )
 
 pico_add_extra_outputs(${PROJECT_NAME})

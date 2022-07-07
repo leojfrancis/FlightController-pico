@@ -2,11 +2,13 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include <random>
+
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 #include "hardware/i2c.h"
 #include "hardware/pwm.h"
-#include <random>
+#include "hardware/timer.h"
 
 #ifndef _SETUP_H
 #define _SETUP_H
@@ -55,6 +57,10 @@ extern "C"
     } Vector3;
 #define ANGLE_GAIN 12
 #define ROT_CORRECTION 0.2
+
+#define START_THRUST_AFTER 10000 //ms
+#define THRUST_STEP 800000 //us
+#define FINAL_THRUST_STAY 1000000 //us
 
 #ifdef __cplusplus
 }

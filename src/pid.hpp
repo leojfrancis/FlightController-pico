@@ -71,7 +71,7 @@ public:
         prev_err = err;
         prev_measurement = measurement;
         out = clamp(prop + diffrential + integral, min, max);
-        printf("prop:%.2f , diffrential:%.2f , integral:%.2f, out:%.2f\n", prop, diffrential, integr, out);
+        // printf("prop:%.2f , diffrential:%.2f , integral:%.2f, out:%.2f\n", prop, diffrential, integr, out);
         return out;
     }
 };

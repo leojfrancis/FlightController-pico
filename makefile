@@ -16,8 +16,8 @@ cp: ## will copy files to rpi
 	cp build/FlightController.uf2 /media/leojfrancis/RPI-RP2/
 
 screen: ## will connect to serial monitor screen package is a dependency
-	# screen /dev/serial/by-id/usb-Raspberry_Pi_Pico_E6609103C337932A-if00 115200;
-	screen /dev/serial/by-id/usb-Raspberry_Pi_Pico_E6609103C385592A-if00 115200;
+	screen /dev/serial/by-id/usb-Raspberry_Pi_Pico_E6609103C337932A-if00 115200;
+	# screen /dev/serial/by-id/usb-Raspberry_Pi_Pico_E6609103C385592A-if00 115200;
 
 test: ## will run a test build, copy, and screen
 	make

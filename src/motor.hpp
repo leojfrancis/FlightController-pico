@@ -39,9 +39,9 @@ uint _setup_motor(uint pin, uint chan)
 void calibrate_thrust(uint pin, uint pwm_chan, double_t power)
 {
    _setup_motor(pin, pwm_chan);
-   sleep_ms(2000);
+   sleep_ms(3000);
    _pwm_set_duty(pin, 10);
-   sleep_ms(2000);
+   sleep_ms(3000);
    _pwm_set_duty(pin, map(power, 0, 10, 5, 10));
 }
 
@@ -70,5 +70,6 @@ void thrust(uint pin, double_t power)
  */
 void servo_angle(uint pin, double_t angle)
 {
-   _pwm_set_duty(pin, map(angle, -90, 90, 5, 10));
+   _pwm_set_duty(pin, clamp_map(angle, -90, 90, 5, 10, 6.26, 8.74));
+   // _pwm_set_duty(pin, map(angle, -90, 90, 6.26, 8.74));
 }
